@@ -1,21 +1,39 @@
 import express from 'express';
-import { Users } from '../model/user-info';
+import { authMiddleware } from '../middlware/Security-auth';
+import { allUser } from '../dao/user-query';
+import { findingUser } from '../dao/user-query';
 
 export const userRouter = express.Router();
 
-userRouter.get('/:id', (req, res) => { // Basic but finace Manager only has access to this!
-    const id: number = +req.params.id;
+userRouter.get('', [authMiddleware(['Admin', 'Finance Manager']), async (req, res) => {
+    console.log('Testing if this even works');
+    const alluser = await allUser();
+    console.log(alluser);
+    res.json(alluser);
+}]);
 
-    console.log(`User id is ${req.params.id}`);
-    const user = Users.find(userfind => userfind.userId === id);
+userRouter.get('/:id', [authMiddleware(['Admin', 'Finance Manager']), (req, res) => {
+
+}]);
+
+
+userRouter.post('/login', async (req, res) => {
+    const {username, password} = req.body;
+    const user = await findingUser(username, password);
+
     if (user) {
+        req.session.user = user;
+        console.log(`Username: ${username} has been accepted`);
+        console.log('Password: * has been accepted');
         res.json(user);
     } else {
-        res.sendStatus(404);
+        console.log(`Username: ${username} has been denied`);
+        console.log('Password: * has been denied');
+        res.sendStatus(401);
     }
 });
 
-userRouter.get('',(req,res)=> {
-res.json(Users);
-});
-
+userRouter.patch('', [authMiddleware(['Admin']), (req, res) => {
+    const { body } = req; // Destructuring
+    const user = 
+}]);

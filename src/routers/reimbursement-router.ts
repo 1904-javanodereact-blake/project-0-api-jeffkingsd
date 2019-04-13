@@ -1,16 +1,24 @@
 import { Reimbursements } from '../model/reimbursement-info';
-import { Reimbursementstatuses } from '../model/reimbursement-info';
-// import {Reimbursementtypes} from '../model/reimbursement-info';
 import express from 'express';
+import { authMiddleware } from '../middlware/Security-auth';
+import { findingStatusId } from '../dao/reim-query';
 
 export const reimbursementRouter = express.Router();
 // console.log(reimbursements);//PLACEHOLDER TO TEST
 
-reimbursementRouter.get('/status/:statusId', (req, res) => {  // Finance-manager has access to this only (+ admin).
-    const reimbstatus = Reimbursementstatuses.find(RS => RS.statusId === +req.params.statusId);
-    res.json(reimbstatus);// PLACEHOLDER TO TEST
-});
-reimbursementRouter.get('/author/userId/:userId',(req,res)=> {
+reimbursementRouter.get('/status/:statusid', [authMiddleware(['Admin', 'Finance Manager']), (req, res) => {  // Finance-manager has access to this only (+ admin).
+    const statusid: number = +req.params.statusid;
+    console.log(statusid);
+    findingStatusId(statusid);
+    if (findingStatusId) {
+        console.log('Query results has been found');
+    } else {
+        console.log('Status has not been found');
+        res.sendStatus(404);
+    }
+}]);
+
+reimbursementRouter.get('/author/userId/:userId', [authMiddleware(['Admin', 'Finance Manager']), (req, res) => {
     const authorid = Reimbursements.find(AId => AId.author === +req.params.userId);
     if (authorid) {
     res.json(authorid);
@@ -18,12 +26,12 @@ reimbursementRouter.get('/author/userId/:userId',(req,res)=> {
     else {
         res.sendStatus(404);
     }
+}]);
+
+reimbursementRouter.post('/Reimbursement', (req, res) => {
+
 });
 
-reimbursementRouter.post('/Reimbursement', (req, res)=> {
-
-});
-
-reimbursementRouter.patch('/Reimbursement', (req, res)=> {
+reimbursementRouter.patch('/Reimbursement', (req, res) => {
 
 });

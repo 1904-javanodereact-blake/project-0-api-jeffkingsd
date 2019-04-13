@@ -5,6 +5,6 @@ const sess = {
     cookie: {secure: false},
     resave: false,
     saveUninitialized: false,
-}
+};
 
 export const sessionERSmiddle = session(sess);
