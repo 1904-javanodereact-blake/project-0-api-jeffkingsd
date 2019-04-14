@@ -1,13 +1,14 @@
 import { db } from './pgp-init';
 import { convertSqlRole } from '../util/sql-role-converter';
 import { convertSqlUser } from '../util/sql-user-converter';
+
 const PQ = require('pg-promise').ParameterizedQuery;
 
 // Creating login Credential
 export async function findingUser(username: string, password: string) {
     const findUser = new PQ(`SELECT * FROM ers_user INNER JOIN ers_role USING (role_id) WHERE username = $1 AND user_password = $2;`);
 
-return db.one(findUser, [username, password])
+return await db.one(findUser, [username, password])
     .then(data => {
         const role = data;
         const convertedUser = convertSqlUser(role);
@@ -22,7 +23,7 @@ return db.one(findUser, [username, password])
 // Grabbing all the user from the ers_user table
 export async function allUser() {
     const allUser = new PQ('SELECT * FROM ers_user;');
-    return db.many(allUser)
+    return await db.many(allUser)
     .then(data => {
         return data;
     }).catch(error => {
@@ -30,18 +31,37 @@ export async function allUser() {
     });
 }
 
+// Finding User Id
 export async function findingUserId(userId: number ) {
-    const findUser = new PQ(`SELECT * FROM ers_user WHERE user_id= $1;`);
+if (userId) {
+    const findUserId = new PQ(`SELECT * FROM ers_user INNER JOIN ers_role USING (role_id) WHERE user_id = $1;`, [userId]);
 
-return db.one(findUser, [userId])
+    return await db.one(findUserId)
     .then(data => {
         const role = data;
         const convertedUser = convertSqlUser(role);
         convertedUser.role = convertSqlRole(role);
         return convertedUser;
-
     }).catch(error => {
         console.log('ERROR:', error);
     });
+} else {
+    return console.log('ERROR: userid not found');
+}
 }
 
+export async function updatingUserInfo(userdata: string[], userdatav: string[], userid: number) {
+const addUserinfo = new PQ();
+
+for (let i = 0; i < userdata.length; i++) {
+    console.log(userdata[i], userdatav[i]);
+    const addUserinfo = new PQ(`UPDATE ers_user SET ${userdata[i]} = '${userdatav[i]}' WHERE user_id = ${userid}`);
+     await db.one(addUserinfo)
+        .then(data => {
+
+        }).catch(error => {
+            console.log('ERROR:', error);
+        });
+    }
+return console.log(`Data has been successfully inputted`);
+}

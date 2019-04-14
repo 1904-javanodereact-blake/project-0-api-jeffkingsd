@@ -1,5 +1,13 @@
 import { Role } from './role';
-
+export class RevUser {
+  user_id = 0;
+  username = '';
+  user_password = '';
+  firstname = '';
+  lastname = '';
+  email = '';
+  role = '';
+}
 export class User {
   userId: number; // primary key
   username: string; // not null, unique
