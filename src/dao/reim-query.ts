@@ -15,3 +15,13 @@ return await db.one(findStatus)
         return console.log('ERROR: STATUS ID IS OUT OF BOUNDS');
     }
 }
+
+export async function findingAuthorId(authorId: number) {
+    const findAuthor = new PQ('SELECT * from ers_reim INNER JOIN ers_user on ers_reim.author = ers_user.user_id WHERE author = $1;', [authorId]);
+return await db.one(findAuthor)
+    .then (data => {
+        return data;
+    }).catch (error => {
+        console.log('ERROR:', error);
+    });
+}

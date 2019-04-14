@@ -51,8 +51,6 @@ if (userId) {
 }
 
 export async function updatingUserInfo(userdata: string[], userdatav: string[], userid: number) {
-const addUserinfo = new PQ();
-
 for (let i = 0; i < userdata.length; i++) {
     console.log(userdata[i], userdatav[i]);
     const addUserinfo = new PQ(`UPDATE ers_user SET ${userdata[i]} = '${userdatav[i]}' WHERE user_id = ${userid}`);

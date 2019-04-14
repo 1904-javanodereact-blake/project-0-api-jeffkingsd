@@ -1,7 +1,6 @@
-import { Reimbursements } from '../model/reimbursement-info';
 import express from 'express';
 import { authMiddleware } from '../middlware/Security-auth';
-import { findingStatusId } from '../dao/reim-query';
+import { findingStatusId, findingAuthorId } from '../dao/reim-query';
 
 export const reimbursementRouter = express.Router();
 // console.log(reimbursements);//PLACEHOLDER TO TEST
@@ -20,14 +19,19 @@ reimbursementRouter.get('/status/:statusid', [authMiddleware(['Admin', 'Finance 
     }
 }]);
 
-reimbursementRouter.get('/author/userId/:userId', [authMiddleware(['Admin', 'Finance Manager']), (req, res) => {
-    const authorid = Reimbursements.find(AId => AId.author === +req.params.userId);
+reimbursementRouter.get('/author/userId/:userId', [authMiddleware(['Admin', 'Finance Manager']), async (req, res) => {
+    const authorid = +req.params.userId;
     if (authorid) {
-    res.json(authorid);
+    const authorinfo = await findingAuthorId(authorid);
+    if (req.session.user.userId === authorid) {
+    res.send(authorinfo);
+    } else if ( req.session.user.role.roleId === 1 || req.session.user.role.roleId === 2) {
+        res.send(authorinfo);
     }
     else {
-        res.sendStatus(404);
+        res.send('You do not have permission to view other person reimbursement status.');
     }
+}
 }]);
 
 reimbursementRouter.post('/Reimbursement', (req, res) => {
