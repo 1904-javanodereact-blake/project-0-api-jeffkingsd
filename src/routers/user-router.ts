@@ -21,7 +21,7 @@ userRouter.get('/:id', [authMiddleware(['Admin', 'Finance Manager', 'Employee'])
          if (req.session.user.userId === user_id) {
             res.json(user);
         }
-        else if (user.role.role === 'Admin' || user.role.role === 'Finance Manager') {
+        else if (req.session.user.role.role === 'Admin' || req.session.user.role.role === 'Finance Manager') {
             res.josn(user);
         } else {
             res.send('You do not have permission to view other people id' + 404);
