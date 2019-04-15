@@ -1,6 +1,6 @@
 import express from 'express';
 import { authMiddleware } from '../middlware/Security-auth';
-import { findingStatusId, findingAuthorId } from '../dao/reim-query';
+import { findingStatusId, findingAuthorId, submittingReim } from '../dao/reim-query';
 
 export const reimbursementRouter = express.Router();
 // console.log(reimbursements);//PLACEHOLDER TO TEST
@@ -34,10 +34,15 @@ reimbursementRouter.get('/author/userId/:userId', [authMiddleware(['Admin', 'Fin
 }
 }]);
 
-reimbursementRouter.post('/Reimbursement', (req, res) => {
-
-});
+reimbursementRouter.post('/submitting', async (req, res) => {
+const { body } = req;
+console.log(body);
+if (!body.author) {
+    console.log('No information detected');
+} else {
+   await submittingReim(body);
+}});
 
 reimbursementRouter.patch('/Reimbursement', (req, res) => {
-
+ 
 });

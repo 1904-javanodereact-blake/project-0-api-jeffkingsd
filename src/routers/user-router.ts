@@ -2,7 +2,7 @@ import express from 'express';
 import { authMiddleware } from '../middlware/Security-auth';
 import { allUser, findingUserId, updatingUserInfo } from '../dao/user-query';
 import { findingUser } from '../dao/user-query';
-import { reverseconvertSqlUser, numberSqlUser } from '../util/sql-user-converter';
+import { numberSqlUser } from '../util/sql-user-converter';
 
 export const userRouter = express.Router();
 
@@ -53,19 +53,14 @@ userRouter.patch('', [authMiddleware(['Admin']), async (req, res) => {
         console.log(body.userId);
         res.send('UserId does not exist');
     } else {
-    const convertedSqlUser = reverseconvertSqlUser(body);
     const user = await findingUserId(body.userId);
     const bodyname = numberSqlUser( Object.keys(body));
-    const conbodyname = Object.entries(convertedSqlUser);
 
     const bodyvalue = [];
         for (const field in user ) {
             if (body[field] !== undefined) {
                 user[field] = body[field];
                 bodyvalue.push(user[field]);
-            }
-            if (bodyname[field] === conbodyname[field]) {
-                // test
             }
         }
         updatingUserInfo(bodyname, bodyvalue, body.userId);
