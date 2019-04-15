@@ -2,7 +2,6 @@ export class SqlReimType {
     type_id = 0;
     type = '';
 }
-
 export class RevSqlReimType {
     type_id: number;
     type: string;

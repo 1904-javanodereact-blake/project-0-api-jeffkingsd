@@ -5,6 +5,7 @@ import { numberReim } from '../util/sql-reim-converter';
 
 export const reimbursementRouter = express.Router();
 
+// Grabbing the statusID which calls the reim-query
 reimbursementRouter.get('/status/:statusid', [authMiddleware(['Admin', 'Finance Manager']), async (req, res) => {  // Finance-manager has access to this only (+ admin).
     const statusid: number = +req.params.statusid;
     console.log(statusid);
@@ -19,37 +20,40 @@ reimbursementRouter.get('/status/:statusid', [authMiddleware(['Admin', 'Finance 
     }
 }]);
 
+// Grabbing the userId which calls the reim_query
 reimbursementRouter.get('/author/userId/:userId', [authMiddleware(['Admin', 'Finance Manager']), async (req, res) => {
     const authorid = +req.params.userId;
     if (authorid) {
-    const authorinfo = await findingAuthorId(authorid);
-    if (req.session.user.userId === authorid) {
-    res.send(authorinfo);
-    } else if ( req.session.user.role.roleId === 1 || req.session.user.role.roleId === 2) {
-        res.send(authorinfo);
+        const authorinfo = await findingAuthorId(authorid);
+        if (req.session.user.userId === authorid) {
+            res.send(authorinfo);
+        } else if ( req.session.user.role.roleId === 1 || req.session.user.role.roleId === 2) {
+            res.send(authorinfo);
+        } else {
+            res.send('You do not have permission to view other person reimbursement status.');
+        }
     }
-    else {
-        res.send('You do not have permission to view other person reimbursement status.');
-    }
-}
 }]);
 
+// Creating new Reimbursement which calls the reim_query
 reimbursementRouter.post('', async (req, res) => {
-const { body } = req;
-console.log(body);
-if (!body.author) {
-    console.log('No information detected');
-} else {
-   await submittingReim(body);
-}});
+    const { body } = req;
+    console.log(body);
+    if (!body.author) {
+        console.log('No information detected');
+    } else {
+        await submittingReim(body);
+    }
+});
 
+// Updating current Reimbursement which calls the reim_query
 reimbursementRouter.patch('', [authMiddleware(['Admin', 'Finance Manager']), async (req, res) => {
-const { body } = req;
-if (!body) {
-    console.log('No information detected');
-} else {
-    const bodynames = Object.keys(body);
-    const convertnames = numberReim(bodynames);
-   await resolvingReim(body, convertnames);
-}
+    const { body } = req;
+    if (!body) {
+        console.log('No information detected');
+    } else {
+        const bodynames = Object.keys(body);
+        const convertnames = numberReim(bodynames);
+        await resolvingReim(body, convertnames);
+    }
 }]);

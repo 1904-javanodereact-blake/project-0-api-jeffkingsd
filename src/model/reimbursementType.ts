@@ -2,7 +2,6 @@ export class RevReimType  {
   type_id = 0;
   type = '';
 }
-
 export class Reimbursementtype {
   typeId: number; // primary key
   type: string;
@@ -11,5 +10,3 @@ export class Reimbursementtype {
         this.type = type;
     }
 }
-
-// Possible types are Lodging, Travel, Food or other

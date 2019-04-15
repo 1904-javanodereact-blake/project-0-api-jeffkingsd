@@ -2,7 +2,6 @@ export class SqlReimStatus {
     status_id = 0;
     status = '';
 }
-
 export class RevSqlReimStatus {
     status_id: number;
     status: string;

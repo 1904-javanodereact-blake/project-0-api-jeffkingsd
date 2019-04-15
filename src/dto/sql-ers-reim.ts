@@ -4,7 +4,6 @@ export class SqlReim {
     date_submitted = 0;
     date_resolved = 0;
 }
-
 export class RevSqlReim {
     status_id: number;
     type_id: number;

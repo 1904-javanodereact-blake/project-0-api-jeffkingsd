@@ -9,15 +9,14 @@ const client = new Client ({
 });
 
 const initOptions = {
-
     schema: 'Employee_Reimbursement_System',
-
     connect(client, dc, useCount) {
         const cp = client.connectionParameters;
         console.log('Connected to database:', cp.database);
     }
 };
 
+// Exporting modeules around the server's dao and index.
 export const pgp = require('pg-promise')(initOptions);
 const cn = client;
 export const db = pgp(cn); // Database instance

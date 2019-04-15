@@ -1,20 +1,17 @@
 import { db } from './pgp-init';
 import { convertSqlRole } from '../util/sql-role-converter';
 import { convertSqlUser } from '../util/sql-user-converter';
-
 const PQ = require('pg-promise').ParameterizedQuery;
 
 // Creating login Credential
 export async function findingUser(username: string, password: string) {
     const findUser = new PQ(`SELECT * FROM ers_user INNER JOIN ers_role USING (role_id) WHERE username = $1 AND user_password = $2;`);
-
-return await db.one(findUser, [username, password])
+    return await db.one(findUser, [username, password])
     .then(data => {
         const role = data;
         const convertedUser = convertSqlUser(role);
         convertedUser.role = convertSqlRole(role);
         return convertedUser;
-
     }).catch(error => {
         console.log('ERROR:', error);
     });
@@ -33,31 +30,30 @@ export async function allUser() {
 
 // Finding User Id
 export async function findingUserId(userId: number ) {
-if (userId) {
-    const findUserId = new PQ(`SELECT * FROM ers_user INNER JOIN ers_role USING (role_id) WHERE user_id = $1;`, [userId]);
-
-    return await db.one(findUserId)
-    .then(data => {
-        const role = data;
-        const convertedUser = convertSqlUser(role);
-        convertedUser.role = convertSqlRole(role);
-        return convertedUser;
-    }).catch(error => {
-        console.log('ERROR:', error);
-    });
-} else {
-    return console.log('ERROR: userid not found');
-}
-}
-
-export async function updatingUserInfo(userdata: string[], userdatav: string[], userid: number) {
-for (let i = 0; i < userdata.length; i++) {
-    console.log(userdata[i], userdatav[i]);
-    const addUserinfo = new PQ(`UPDATE ers_user SET ${userdata[i]} = '${userdatav[i]}' WHERE user_id = ${userid}`);
-     await db.one(addUserinfo)
+    if (userId) {
+        const findUserId = new PQ(`SELECT * FROM ers_user INNER JOIN ers_role USING (role_id) WHERE user_id = $1;`, [userId]);
+        return await db.one(findUserId)
         .then(data => {
-
+            const role = data;
+            const convertedUser = convertSqlUser(role);
+            convertedUser.role = convertSqlRole(role);
+            return convertedUser;
         }).catch(error => {
+            console.log('ERROR:', error);
+        });
+    } else {
+    return console.log('ERROR: userid not found');
+    }
+}
+
+// Updating User's Information on the database from the request http client.
+export async function updatingUserInfo(userdata: string[], userdatav: string[], userid: number) {
+    for (let i = 0; i < userdata.length; i++) {
+        const addUserinfo = new PQ(`UPDATE ers_user SET ${userdata[i]} = '${userdatav[i]}' WHERE user_id = ${userid}`);
+        await db.one(addUserinfo)
+            .then(data => {
+            // User date is being updated. Pull information from here.
+            }).catch(error => {
             console.log('ERROR:', error);
         });
     }
