@@ -52,12 +52,11 @@ userRouter.patch('', [authMiddleware(['Admin']), async (req, res) => {
         res.send('UserId does not exist');
     } else {
         const user = await findingUserId(body.userId);
-        const bodyname = numberSqlUser( Object.keys(body));
+        const bodyname = numberSqlUser(Object.keys(body));
         const bodyvalue = [];
         for (const field in user ) {
             if (body[field] !== undefined) {
-                user[field] = body[field];
-                bodyvalue.push(user[field]);
+                bodyvalue.push(body[field]);
             }
         }
         updatingUserInfo(bodyname, bodyvalue, body.userId);

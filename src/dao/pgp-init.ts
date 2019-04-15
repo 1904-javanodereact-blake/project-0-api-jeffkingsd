@@ -1,3 +1,9 @@
+/*
+    PG-Promise is a library that built ontop of PG-Postegre. It simplifies
+    connection handling, connection pooling, disconnecting, parent connection
+    to child connection. Handle all abstracted Queries results and can be used
+    to specifiy different query statements.
+*/
 const { Client } = require ('pg');
 
 const client = new Client ({

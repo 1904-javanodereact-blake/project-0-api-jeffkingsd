@@ -23,6 +23,8 @@ export function numberSqlUser( userarr: string[] ) {
                         userarr[i] = 'lastname';
                 } else if (word === 'role') {
                         userarr[i] = 'role_id';
+                } else if (word === 'password') {
+                        userarr[i] = 'user_password';
                         console.log(userarr[i]);
                 }
         }
