@@ -1,9 +1,9 @@
 import express from 'express';
 import { authMiddleware } from '../middlware/Security-auth';
-import { findingStatusId, findingAuthorId, submittingReim } from '../dao/reim-query';
+import { findingStatusId, findingAuthorId, submittingReim, resolvingReim } from '../dao/reim-query';
+import { numberReim } from '../util/sql-reim-converter';
 
 export const reimbursementRouter = express.Router();
-// console.log(reimbursements);//PLACEHOLDER TO TEST
 
 reimbursementRouter.get('/status/:statusid', [authMiddleware(['Admin', 'Finance Manager']), async (req, res) => {  // Finance-manager has access to this only (+ admin).
     const statusid: number = +req.params.statusid;
@@ -34,7 +34,7 @@ reimbursementRouter.get('/author/userId/:userId', [authMiddleware(['Admin', 'Fin
 }
 }]);
 
-reimbursementRouter.post('/submitting', async (req, res) => {
+reimbursementRouter.post('', async (req, res) => {
 const { body } = req;
 console.log(body);
 if (!body.author) {
@@ -43,6 +43,13 @@ if (!body.author) {
    await submittingReim(body);
 }});
 
-reimbursementRouter.patch('/Reimbursement', (req, res) => {
- 
-});
+reimbursementRouter.patch('', [authMiddleware(['Admin', 'Finance Manager']), async (req, res) => {
+const { body } = req;
+if (!body) {
+    console.log('No information detected');
+} else {
+    const bodynames = Object.keys(body);
+    const convertnames = numberReim(bodynames);
+   await resolvingReim(body, convertnames);
+}
+}]);

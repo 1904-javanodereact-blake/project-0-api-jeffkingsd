@@ -1,5 +1,13 @@
-
-export class Reimbursement {
+export class RevReim {
+    author = 0;
+    amount = 0;
+    date_submitted = 0;
+    date_resolved = 0;
+    description = '';
+    status_id = 0;
+    type_id = 0;
+}
+export class Reim {
     reimbursementId: number; // primary key
     author: number;  // foreign key -> User
     amount: number;
