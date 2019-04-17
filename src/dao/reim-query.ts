@@ -23,8 +23,9 @@ export async function findingAuthorId(authorId: number) {
     const findAuthor = new PQ('SELECT * from ers_reim INNER JOIN ers_user on ers_reim.author = ers_user.user_id WHERE author = $1;', [authorId]);
     return await db.one(findAuthor)
     .then (data => {
-        const convertedReim = convertSqlReim(data);
-        return convertedReim;
+        /* const convertedReim = convertSqlReim(data);
+        return convertedReim; */
+        return data;
     }).catch (error => {
         console.log('ERROR:', error);
     });
@@ -54,7 +55,7 @@ export async function resolvingReim(bodyobj: any, bodyname: string[]) {
             bodylist[i] = 'CURRENT_TIMESTAMP';
         }
         const updateReim = new PQ(`UPDATE ers_reim SET ${bodyname[i]} = ${bodylist[i]} WHERE reimbursement_id = ${bodylist[0]};`);
-        await db.one(updateReim)
+        await db.many(updateReim)
            .then (data => {
             console.log('Data as been successfully inputted');
             return data;

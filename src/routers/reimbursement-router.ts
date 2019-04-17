@@ -8,9 +8,7 @@ export const reimbursementRouter = express.Router();
 // Grabbing the statusID which calls the reim-query
 reimbursementRouter.get('/status/:statusid', [authMiddleware(['Admin', 'Finance Manager']), async (req, res) => {  // Finance-manager has access to this only (+ admin).
     const statusid: number = +req.params.statusid;
-    console.log(statusid);
     const data = await findingStatusId(statusid);
-    console.log(data);
     if (findingStatusId) {
         console.log('Query results has been found');
         res.json(data);
@@ -25,10 +23,11 @@ reimbursementRouter.get('/author/userId/:userId', [authMiddleware(['Admin', 'Fin
     const authorid = +req.params.userId;
     if (authorid) {
         const authorinfo = await findingAuthorId(authorid);
+        console.log (authorinfo);
         if (req.session.user.userId === authorid) {
-            res.send(authorinfo);
+            res.json(authorinfo);
         } else if ( req.session.user.role.roleId === 1 || req.session.user.role.roleId === 2) {
-            res.send(authorinfo);
+            res.json(authorinfo);
         } else {
             res.send('You do not have permission to view other person reimbursement status.');
         }
