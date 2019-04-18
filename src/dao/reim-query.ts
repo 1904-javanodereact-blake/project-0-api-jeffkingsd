@@ -20,14 +20,38 @@ export async function findingStatusId(statusId: number) {
 
 // Finding the authorId of the reimbursement includes their ers_user info and ers_reim info
 export async function findingAuthorId(authorId: number) {
-    const findAuthor = new PQ('SELECT * from ers_reim INNER JOIN ers_user on ers_reim.author = ers_user.user_id WHERE author = $1;', [authorId]);
-    return await db.one(findAuthor)
-    .then (data => {
+    const findAuthorInfo = new PQ('SELECT * FROM ers_reim WHERE author = $1;', [authorId]);
+
+    return await db.one (findAuthorInfo)
+    .then (async data => {
+        for (const field in data) {
+            if (field === 'author') {
+                const fullName = await findAuthorName(data[field]);
+                data[field] = fullName;
+            }
+        }
         /* const convertedReim = convertSqlReim(data);
         return convertedReim; */
         return data;
     }).catch (error => {
         console.log('ERROR:', error);
+        console.log('ERROR: AuthorId does not exist!');
+    });
+}
+
+export async function findAuthorName(authorId: number) {
+    const findAuthor = new PQ('SELECT firstname, lastname FROM ers_user INNER JOIN ers_reim ON ers_user.user_id = ers_reim.author WHERE author = $1;', [authorId]);
+
+    return await db.one(findAuthor)
+    .then(data => {
+        const tempName = [];
+        for ( const field in data) {
+            tempName.push(data[field]);
+        }
+        const fullname = tempName[0] + ' ' + tempName[1];
+        return fullname;
+    }).catch(error => {
+        console.log('Error:', error);
     });
 }
 

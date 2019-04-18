@@ -23,14 +23,19 @@ reimbursementRouter.get('/author/userId/:userId', [authMiddleware(['Admin', 'Fin
     const authorid = +req.params.userId;
     if (authorid) {
         const authorinfo = await findingAuthorId(authorid);
-        console.log (authorinfo);
-        if (req.session.user.userId === authorid) {
-            res.json(authorinfo);
-        } else if ( req.session.user.role.roleId === 1 || req.session.user.role.roleId === 2) {
-            res.json(authorinfo);
+        if (authorinfo !== undefined) {
+            if (req.session.user.userId === authorid) {
+               res.json(authorinfo);
+            } else if ( req.session.user.role.roleId === 1 || req.session.user.role.roleId === 2) {
+                res.json(authorinfo);
+             } else {
+                res.send('You do not have permission to view other person reimbursement status.');
+          }
         } else {
-            res.send('You do not have permission to view other person reimbursement status.');
+            res.send(`AuthorId doesn't exist in our database`);
         }
+    } else {
+        res.send(`User doesn't exist in our Reimbursement Database`);
     }
 }]);
 

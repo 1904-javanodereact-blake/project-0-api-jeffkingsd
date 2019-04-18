@@ -22,7 +22,7 @@ userRouter.get('/:id', [authMiddleware(['Admin', 'Finance Manager', 'Employee'])
         res.json(user);
     }
     else if (req.session.user.role.role === 'Admin' || req.session.user.role.role === 'Finance Manager') {
-        res.josn(user);
+        res.json(user);
     } else {
         res.send('You do not have permission to view other people id' + 404);
     }
@@ -38,7 +38,6 @@ userRouter.post('/login', async (req, res) => {
         console.log(`Username: ${username} has been accepted`);
         console.log('Password: * has been accepted');
         res.sendStatus(200);
-        console.log('what');
     } else {
         console.log(`Username: ${username} has been denied`);
         console.log('Password: * has been denied');
