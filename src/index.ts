@@ -5,6 +5,7 @@ import { reimbursementRouter } from './routers/reimbursement-router';
 import { userRouter } from './routers/user-router';
 import { sessionERSmiddle } from './middlware/security-session';
 const ers = express();
+const port = process.env.ERS_PORT;
 
 // Checking for a successful database connection
 
@@ -20,6 +21,6 @@ ers.use('/user', userRouter);
 ers.use('/reimbursements', reimbursementRouter);
 
 // Open up the connection
-ers.listen(8080, () => {
+ers.listen(port, () => {
     console.log('Employee Reimbursement System is now Online');
 });
