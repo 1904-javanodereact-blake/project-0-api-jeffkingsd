@@ -1,6 +1,6 @@
-import { RevReimType } from '../model/reimbursementType';
+import { RevReimType } from '../model/Reimbursementtype';
 import { RevSqlReimType } from '../dto/sql-ers-reim-type';
-import { RevReimStatus } from '../model/reimbursementStatus';
+import { RevReimStatus } from '../model/Reimbursementstatus';
 import { RevSqlReimStatus } from '../dto/sql-ers-reim-status';
 import { RevReim } from '../model/reimbursement';
 import { RevSqlReim } from '../dto/sql-ers-reim';

@@ -19,6 +19,7 @@ const initOptions = {
         console.log('Connected to database:', cp.database);
     }
 };
+// hi
 
 // Exporting modeules around the server's dao and index.
 export const pgp = require('pg-promise')(initOptions);
