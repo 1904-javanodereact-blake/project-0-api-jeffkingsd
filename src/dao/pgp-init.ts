@@ -5,10 +5,10 @@
     to specifiy different query statements.
 */
 const client = {
-    host: process.env['ERS_URL'], // This gone to localhost
-    database: process.env['ERS_NAME'] || 'postgres',
-    user: process.env['ERS_USERNAME'],       // This been successfully read
-    password: process.env['ERS_PASSWORD'],   // THis been successfully read
+    host: process.env['ERS_DB_URL'], // This gone to localhost
+    database: process.env['ERS_DB_NAME'] || 'postgres',
+    user: process.env['ERS_DB_USERNAME'],       // This been successfully read
+    password: process.env['ERS_DB_PASSWORD'],   // THis been successfully read
     port: 5432,
 };
 
