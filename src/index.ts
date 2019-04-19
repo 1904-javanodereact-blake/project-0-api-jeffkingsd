@@ -5,10 +5,7 @@ import { reimbursementRouter } from './routers/reimbursement-router';
 import { userRouter } from './routers/user-router';
 import { sessionERSmiddle } from './middlware/security-session';
 const ers = express();
-const port = process.env.ERS_PORT;
-
-// Checking for a successful database connection
-
+const port = process.env.ERS_PORT || 8081;
 
 // Middlware and Router Endpoints
 ers.get('/dummy', ( req, res ) => {
