@@ -19,6 +19,7 @@
     "@types/express-session": "^1.15.12",
     "@types/pg": "^7.4.14",
     "nodemon": "^1.18.10",
+    "ts-node": "^8.1.0",
     "tslint": "^5.15.0"
   },
   "dependencies": {
@@ -27,6 +28,6 @@
     "express-session": "^1.15.6",
     "pg": "^7.9.0",
     "pg-promise": "^8.6.4",
-    "typescript": "^3.4.2"
+    "typescript": "^3.4.4"
   }
 }
