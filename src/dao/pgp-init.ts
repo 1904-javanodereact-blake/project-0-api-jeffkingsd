@@ -9,7 +9,7 @@ const client = {
     database: process.env['ERS_DB_NAME'] || 'postgres',
     user: process.env['ERS_DB_USERNAME'],       // This been successfully read
     password: process.env['ERS_DB_PASSWORD'],   // THis been successfully read
-    port: process.env['ERS_PORt'],
+    port: 5432,
 };
 
 const initOptions = {
