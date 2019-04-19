@@ -10,6 +10,10 @@ const ers = express();
 
 
 // Middlware and Router Endpoints
+ers.get('/dummy', ( req, res ) => {
+    res.send('HELLO THIS IS A TEST DUMMY');
+});
+
 ers.use(bodyParser.json());
 ers.use(sessionERSmiddle);
 ers.use('/user', userRouter);
