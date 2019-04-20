@@ -1,0 +1,38 @@
+header {
+    background-color: blue;
+    color: wheat;
+}
+.logo {
+    font-size: 40px;
+    border: solid 8px lime;
+    margin: auto;
+    padding: 5px;
+
+}
+body {
+    background-color: blue;
+    color: whitesmoke;
+    vertical-align: middle;
+}
+
+nav {
+    background-color: hotpink;
+    margin: auto;
+    padding-bottom: 0%;
+}
+
+main {
+    background-color: yellow;
+}
+.left-side {
+    background-color: lime;
+}
+
+.right-side {
+    background-color: lime;
+}
+
+
+footer {
+    background-color: silver;
+}
