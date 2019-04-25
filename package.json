@@ -23,14 +23,28 @@
     "tslint": "^5.15.0"
   },
   "dependencies": {
+    "@types/next": "^8.0.4",
+    "@types/react": "^16.8.14",
+    "@types/react-router": "^4.4.5",
+    "@types/react-router-dom": "^4.3.2",
+    "@types/reactstrap": "^8.0.1",
+    "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "bootstrap": "^4.3.1",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "jquery": "^3.4.0",
+    "next": "^8.1.0",
+    "path": "^0.12.7",
     "pg": "^7.9.0",
     "pg-promise": "^8.6.4",
     "popper.js": "^1.15.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-router": "^5.0.0",
+    "react-router-dom": "^5.0.0",
+    "reactstrap": "^8.0.0",
+    "tether": "^1.4.6",
     "typescript": "^3.4.2"
   }
 }

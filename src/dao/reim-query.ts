@@ -39,6 +39,16 @@ export async function findingAuthorId(authorId: number) {
     });
 }
 
+// Grabbing all author's reimbursements
+export async function allAuthor() {
+    const Authors = new PQ('SELECT * FROM ers_reim;');
+    return db.many(Authors)
+    .then(data => {
+        return data;
+    }).catch(error => {
+        console.log('Error:', error);
+    });
+}
 export async function findAuthorName(authorId: number) {
     const findAuthor = new PQ('SELECT firstname, lastname FROM ers_user INNER JOIN ers_reim ON ers_user.user_id = ers_reim.author WHERE author = $1;', [authorId]);
 

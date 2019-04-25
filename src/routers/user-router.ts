@@ -3,7 +3,6 @@ import { authMiddleware } from '../middlware/Security-auth';
 import { allUser, findingUserId, updatingUserInfo } from '../dao/user-query';
 import { findingUser } from '../dao/user-query';
 import { numberSqlUser } from '../util/sql-user-converter';
-import { path } from '..';
 
 export const userRouter = express.Router();
 
@@ -38,7 +37,7 @@ userRouter.post('/login', async (req, res) => {
         console.log(req.session.user);
         console.log(`Username: ${username} has been accepted`);
         console.log('Password: * has been accepted');
-        res.sendFile(path + 'home.html');
+        res.sendStatus(200);
     } else {
         console.log(`Username: ${username} has been denied`);
         console.log('Password: * has been denied');
