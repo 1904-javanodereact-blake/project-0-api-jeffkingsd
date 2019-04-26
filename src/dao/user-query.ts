@@ -50,7 +50,7 @@ export async function findingUserId(userId: number ) {
 export async function updatingUserInfo(userdata: string[], userdatav: string[], userid: number) {
     for (let i = 0; i < userdata.length; i++) {
         const addUserinfo = new PQ(`UPDATE ers_user SET ${userdata[i]} = '${userdatav[i]}' WHERE user_id = ${userid}`);
-        await db.one(addUserinfo)
+        await db.none(addUserinfo)
             .then(data => {
             // User date is being updated. Pull information from here.
             }).catch(error => {

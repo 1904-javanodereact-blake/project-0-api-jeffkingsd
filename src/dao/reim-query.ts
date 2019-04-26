@@ -49,6 +49,8 @@ export async function allAuthor() {
         console.log('Error:', error);
     });
 }
+
+// Finding the author name.
 export async function findAuthorName(authorId: number) {
     const findAuthor = new PQ('SELECT firstname, lastname FROM ers_user INNER JOIN ers_reim ON ers_user.user_id = ers_reim.author WHERE author = $1;', [authorId]);
 
@@ -68,7 +70,7 @@ export async function findAuthorName(authorId: number) {
 // Submitting a new Reimbursement into the database
 export async function submittingReim(bodyobj: any) {
     const createReim = new PQ(`INSERT INTO ers_reim (author, amount, date_submitted, description, resolver, status_id, type_id) VALUES (${bodyobj.author}, ${bodyobj.amount}, CURRENT_TIMESTAMP, ${bodyobj.description}, 6, 0, ${bodyobj.type});`);
-    return await db.one(createReim)
+    return await db.none(createReim)
     .then (data => {
         return data;
     }).catch (error => {
@@ -89,7 +91,7 @@ export async function resolvingReim(bodyobj: any, bodyname: string[]) {
             bodylist[i] = 'CURRENT_TIMESTAMP';
         }
         const updateReim = new PQ(`UPDATE ers_reim SET ${bodyname[i]} = ${bodylist[i]} WHERE reimbursement_id = ${bodylist[0]};`);
-        await db.many(updateReim)
+        await db.none(updateReim)
            .then (data => {
             console.log('Data as been successfully inputted');
             return data;
