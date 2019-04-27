@@ -41,30 +41,20 @@ export async function findingAuthorId(authorId: number) {
 
 // Grabbing all author's reimbursements
 export async function allAuthor() {
-    const Authors = new PQ('SELECT * FROM ers_reim;');
+    const Authors = new PQ();
     return db.many(Authors)
     .then(async data => {
         for ( const field in data ) {
             for (const fieldobj in data[field] ) {
-                if ( fieldobj === 'author') {
-                    const name = await findAuthorName(data[field][fieldobj]);
-                    data[field][fieldobj] = name;
-                    console.log(data[field][fieldobj]);
+                 if ( fieldobj === 'date_submitted' ) {
+                    const date = new Date(data[field][fieldobj]);
+                    const newdate = date.toDateString();
+                    data[field][fieldobj] = newdate;
                 }
-                if ( fieldobj === 'resolver' ) {
-                        const name = await findAuthorName(data[field][fieldobj]);
-                        data[field][fieldobj] = name;
-                        console.log(data[field][fieldobj]);
-                }
-                if ( fieldobj === 'status_id' ) {
-                    const name = await findAuthorName(data[field][fieldobj]);
-                    data[field][fieldobj] = name;
-                    console.log(data[field][fieldobj]);
-                }
-                if ( fieldobj === 'type_id' ) {
-                    const name = await findAuthorName(data[field][fieldobj]);
-                    data[field][fieldobj] = name;
-                    console.log(data[field][fieldobj]);
+                if ( fieldobj === 'date_resolved') {
+                    const date = new Date(data[field][fieldobj]);
+                    const newdate = date.toDateString();
+                    data[field][fieldobj] = newdate;
                 }
             }
         }
@@ -73,19 +63,28 @@ export async function allAuthor() {
         console.log('Error:', error);
     });
 }
+// Grabbing status ID
+export async function findStatusId(statusId: number) {
+    const findStatus = new PQ('SELECT status FROM ers_reim_status WHERE status_id = $1;', [statusId]);
 
+    return await db.one(findStatus)
+    .then(data => {
+        const statusName = [];
+        statusName.push(data);
+        return statusName[0];
+    }).catch(error => {
+        console.log('Error:', error);
+    });
+}
 // Finding the author name.
 export async function findAuthorName(authorId: number) {
-    const findAuthor = new PQ('SELECT firstname, lastname FROM ers_user WHERE ers_user.user_id = $1;', [authorId]);
+    const findAuthor = new PQ(`SELECT CONCAT(firstname, ' ', lastname) AS full_name FROM ers_user WHERE ers_user.user_id = $1;`, [authorId]);
 
     return await db.one(findAuthor)
     .then(data => {
-        const tempName = [];
-        for ( const field in data) {
-            tempName.push(data[field]);
-        }
-        const fullname = tempName[0] + ' ' + tempName[1];
-        return fullname;
+        const resolverName = [];
+        resolverName.push(data);
+        return resolverName[0];
     }).catch(error => {
         console.log('Error:', error);
     });
