@@ -20,18 +20,10 @@ export async function findingStatusId(statusId: number) {
 
 // Finding the authorId of the reimbursement includes their ers_user info and ers_reim info
 export async function findingAuthorId(authorId: number) {
-    const findAuthorInfo = new PQ('SELECT * FROM ers_reim WHERE author = $1;', [authorId]);
+    const findAuthorInfo = new PQ(``, [authorId]);
 
     return await db.one (findAuthorInfo)
     .then (async data => {
-        for (const field in data) {
-            if (field === 'author') {
-                const fullName = await findAuthorName(data[field]);
-                data[field] = fullName;
-            }
-        }
-        /* const convertedReim = convertSqlReim(data);
-        return convertedReim; */
         return data;
     }).catch (error => {
         console.log('ERROR:', error);
@@ -41,7 +33,7 @@ export async function findingAuthorId(authorId: number) {
 
 // Grabbing all author's reimbursements
 export async function allAuthor() {
-    const Authors = new PQ();
+    const Authors = new PQ(``);
     return db.many(Authors)
     .then(async data => {
         for ( const field in data ) {
@@ -59,32 +51,6 @@ export async function allAuthor() {
             }
         }
         return data;
-    }).catch(error => {
-        console.log('Error:', error);
-    });
-}
-// Grabbing status ID
-export async function findStatusId(statusId: number) {
-    const findStatus = new PQ('SELECT status FROM ers_reim_status WHERE status_id = $1;', [statusId]);
-
-    return await db.one(findStatus)
-    .then(data => {
-        const statusName = [];
-        statusName.push(data);
-        return statusName[0];
-    }).catch(error => {
-        console.log('Error:', error);
-    });
-}
-// Finding the author name.
-export async function findAuthorName(authorId: number) {
-    const findAuthor = new PQ(`SELECT CONCAT(firstname, ' ', lastname) AS full_name FROM ers_user WHERE ers_user.user_id = $1;`, [authorId]);
-
-    return await db.one(findAuthor)
-    .then(data => {
-        const resolverName = [];
-        resolverName.push(data);
-        return resolverName[0];
     }).catch(error => {
         console.log('Error:', error);
     });
