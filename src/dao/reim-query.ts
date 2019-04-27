@@ -43,7 +43,31 @@ export async function findingAuthorId(authorId: number) {
 export async function allAuthor() {
     const Authors = new PQ('SELECT * FROM ers_reim;');
     return db.many(Authors)
-    .then(data => {
+    .then(async data => {
+        for ( const field in data ) {
+            for (const fieldobj in data[field] ) {
+                if ( fieldobj === 'author') {
+                    const name = await findAuthorName(data[field][fieldobj]);
+                    data[field][fieldobj] = name;
+                    console.log(data[field][fieldobj]);
+                }
+                if ( fieldobj === 'resolver' ) {
+                        const name = await findAuthorName(data[field][fieldobj]);
+                        data[field][fieldobj] = name;
+                        console.log(data[field][fieldobj]);
+                }
+                if ( fieldobj === 'status_id' ) {
+                    const name = await findAuthorName(data[field][fieldobj]);
+                    data[field][fieldobj] = name;
+                    console.log(data[field][fieldobj]);
+                }
+                if ( fieldobj === 'type_id' ) {
+                    const name = await findAuthorName(data[field][fieldobj]);
+                    data[field][fieldobj] = name;
+                    console.log(data[field][fieldobj]);
+                }
+            }
+        }
         return data;
     }).catch(error => {
         console.log('Error:', error);
@@ -52,7 +76,7 @@ export async function allAuthor() {
 
 // Finding the author name.
 export async function findAuthorName(authorId: number) {
-    const findAuthor = new PQ('SELECT firstname, lastname FROM ers_user INNER JOIN ers_reim ON ers_user.user_id = ers_reim.author WHERE author = $1;', [authorId]);
+    const findAuthor = new PQ('SELECT firstname, lastname FROM ers_user WHERE ers_user.user_id = $1;', [authorId]);
 
     return await db.one(findAuthor)
     .then(data => {
