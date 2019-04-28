@@ -20,10 +20,22 @@ export async function findingStatusId(statusId: number) {
 
 // Finding the authorId of the reimbursement includes their ers_user info and ers_reim info
 export async function findingAuthorId(authorId: number) {
-    const findAuthorInfo = new PQ(``, [authorId]);
+    const findAuthorInfo = new PQ(`SELECT T1.Reimbursement_id, T1.amount, T1.date_submitted, T1.author, T1.date_resolved, T1.description, T1.status, T1.type, T1.full_name, T2.resolver_name FROM (SELECT Reimbursement_id, amount, author, date_submitted, date_resolved, description, resolver, status, type, CONCAT(firstName, ' ', lastName) AS full_name FROM ers_reim INNER JOIN ers_user ON ers_reim.author = ers_user.user_id INNER JOIN ers_reim_status USING(status_id) INNER JOIN ers_reim_type USING(type_id)) as T1 RIGHT JOIN (SELECT CONCAT(firstname, ' ', lastname) AS resolver_name, user_id, resolver FROM ers_user INNER JOIN ers_reim ON ers_user.user_id = ers_reim.resolver) AS T2 ON T1.resolver = T2.resolver GROUP BY T1.Reimbursement_id, T1.amount, T1.author, T1.date_submitted, T1.date_resolved, T1.description, T1.status, T1.type, T1.full_name, T2.resolver_name HAVING T1.author = $1;`, [authorId]);
 
     return await db.one (findAuthorInfo)
     .then (async data => {
+        for ( const field in data ) {
+                 if ( field === 'date_submitted' ) {
+                    const date = new Date(data[field]);
+                    const newdate = date.toDateString();
+                    data[field] = newdate;
+                }
+                if ( field === 'date_resolved') {
+                    const date = new Date(data[field]);
+                    const newdate = date.toDateString();
+                    data[field] = newdate;
+                }
+        }
         return data;
     }).catch (error => {
         console.log('ERROR:', error);
@@ -33,7 +45,7 @@ export async function findingAuthorId(authorId: number) {
 
 // Grabbing all author's reimbursements
 export async function allAuthor() {
-    const Authors = new PQ(``);
+    const Authors = new PQ(`SELECT T1.Reimbursement_id, T1.amount, T1.date_submitted, T1.date_resolved, T1.description, T1.status, T1.type, T1.full_name, T2.resolver_name FROM (SELECT Reimbursement_id, amount, date_submitted, date_resolved, description, resolver, status, type, CONCAT(firstName, ' ', lastName) AS full_name FROM ers_reim INNER JOIN ers_user ON ers_reim.author = ers_user.user_id INNER JOIN ers_reim_status USING(status_id) INNER JOIN ers_reim_type USING(type_id)) as T1 RIGHT JOIN (SELECT CONCAT(firstname, ' ', lastname) AS resolver_name, user_id, resolver FROM ers_user INNER JOIN ers_reim ON ers_user.user_id = ers_reim.resolver) AS T2 ON T1.resolver = T2.resolver GROUP BY T1.Reimbursement_id, T1.amount, T1.date_submitted, T1.date_resolved, T1.description, T1.status, T1.type, T1.full_name, T2.resolver_name ORDER BY T1.Reimbursement_id;`);
     return db.many(Authors)
     .then(async data => {
         for ( const field in data ) {

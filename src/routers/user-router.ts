@@ -37,7 +37,7 @@ userRouter.post('/login', async (req, res) => {
         console.log(req.session.user);
         console.log(`Username: ${username} has been accepted`);
         console.log('Password: * has been accepted');
-        res.sendStatus(200);
+        res.json(user);
     } else {
         console.log(`Username: ${username} has been denied`);
         console.log('Password: * has been denied');
