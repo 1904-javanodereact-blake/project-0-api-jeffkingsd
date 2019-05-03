@@ -22,7 +22,7 @@ export async function findingStatusId(statusId: number) {
 export async function findingAuthorId(authorId: number) {
     const findAuthorInfo = new PQ(`SELECT T1.Reimbursement_id, T1.amount, T1.date_submitted, T1.author, T1.date_resolved, T1.description, T1.status, T1.type, T1.full_name, T2.resolver_name FROM (SELECT Reimbursement_id, amount, author, date_submitted, date_resolved, description, resolver, status, type, CONCAT(firstName, ' ', lastName) AS full_name FROM ers_reim INNER JOIN ers_user ON ers_reim.author = ers_user.user_id INNER JOIN ers_reim_status USING(status_id) INNER JOIN ers_reim_type USING(type_id)) as T1 RIGHT JOIN (SELECT CONCAT(firstname, ' ', lastname) AS resolver_name, user_id, resolver FROM ers_user INNER JOIN ers_reim ON ers_user.user_id = ers_reim.resolver) AS T2 ON T1.resolver = T2.resolver GROUP BY T1.Reimbursement_id, T1.amount, T1.author, T1.date_submitted, T1.date_resolved, T1.description, T1.status, T1.type, T1.full_name, T2.resolver_name HAVING T1.author = $1;`, [authorId]);
 
-    return await db.one (findAuthorInfo)
+    return await db.many (findAuthorInfo)
     .then (async data => {
         for ( const field in data ) {
                  if ( field === 'date_submitted' ) {
@@ -39,7 +39,7 @@ export async function findingAuthorId(authorId: number) {
         return data;
     }).catch (error => {
         console.log('ERROR:', error);
-        console.log('ERROR: AuthorId does not exist!');
+        return undefined;
     });
 }
 
@@ -67,15 +67,28 @@ export async function allAuthor() {
         console.log('Error:', error);
     });
 }
+// Deleting a row in the reimbursement database
+export async function deletingReim(id: number) {
+    const deletereim = new PQ('DELETE FROM ers_reim WHERE reimbursement_id = $1', [id]);
+
+    return await db.none(deletereim)
+    .then (data => {
+        return data;
+    }).catch (error => {
+        console.log('ERROR Deleting: ', error);
+    });
+}
 
 // Submitting a new Reimbursement into the database
 export async function submittingReim(bodyobj: any) {
-    const createReim = new PQ(`INSERT INTO ers_reim (author, amount, date_submitted, description, resolver, status_id, type_id) VALUES (${bodyobj.author}, ${bodyobj.amount}, CURRENT_TIMESTAMP, ${bodyobj.description}, 6, 0, ${bodyobj.type});`);
+    const createReim = new PQ(`INSERT INTO ers_reim (author, amount, date_submitted, description, resolver, status_id, type_id)
+                                    VALUES (${bodyobj.author}, ${bodyobj.amount}, CURRENT_TIMESTAMP, '${bodyobj.description}', 6, 0, ${bodyobj.type});`);
+
     return await db.none(createReim)
     .then (data => {
         return data;
     }).catch (error => {
-        console.log('ERROR:', error);
+        console.log('ERROR Submitting:', error);
     });
 }
 
@@ -92,6 +105,7 @@ export async function resolvingReim(bodyobj: any, bodyname: string[]) {
             bodylist[i] = 'CURRENT_TIMESTAMP';
         }
         const updateReim = new PQ(`UPDATE ers_reim SET ${bodyname[i]} = ${bodylist[i]} WHERE reimbursement_id = ${bodylist[0]};`);
+        console.log(updateReim);
         await db.none(updateReim)
            .then (data => {
             console.log('Data as been successfully inputted');
@@ -100,4 +114,15 @@ export async function resolvingReim(bodyobj: any, bodyname: string[]) {
             console.log('ERROR:', error);
         });
     }
+}
+
+// Grabbing all the pending claims
+export async function getPendingReim() {
+    const pendClaim = new PQ('select * from ers_reim where status_id = 0;');
+    await db.one(pendClaim)
+    .then (data => {
+     return data;
+ }).catch (error => {
+     console.log('ERROR NO CLAIMS:', error);
+ });
 }

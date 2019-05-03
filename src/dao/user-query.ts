@@ -46,6 +46,18 @@ export async function findingUserId(userId: number ) {
     }
 }
 
+// Submitting a new User into the database
+export async function submittingUser(bodyobj: any) {
+    const createUser = new PQ(`INSERT INTO ers_user (username, user_password, firstname, lastname, email, role_id) VALUES ('${bodyobj.username}','${bodyobj.user_password}','${bodyobj.firstname}','${bodyobj.lastname}', '${bodyobj.email}', 3)`);
+    console.log(createUser);
+    return await db.none(createUser)
+    .then (data => {
+        return data;
+    }).catch (error => {
+        console.log('ERROR Submitting:', error);
+    });
+}
+
 // Updating User's Information on the database from the request http client.
 export async function updatingUserInfo(userdata: string[], userdatav: string[], userid: number) {
     for (let i = 0; i < userdata.length; i++) {

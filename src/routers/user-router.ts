@@ -1,6 +1,6 @@
 import express from 'express';
 import { authMiddleware } from '../middlware/Security-auth';
-import { allUser, findingUserId, updatingUserInfo } from '../dao/user-query';
+import { allUser, findingUserId, updatingUserInfo, submittingUser } from '../dao/user-query';
 import { findingUser } from '../dao/user-query';
 import { numberSqlUser } from '../util/sql-user-converter';
 
@@ -27,7 +27,12 @@ userRouter.get('/:id', [authMiddleware(['Admin', 'Finance Manager', 'Employee'])
         res.send('You do not have permission to view other people id' + 404);
     }
 }]);
-
+// Loggin out System
+userRouter.post('/logout', async (req, res) => {
+    req.session.destroy(function(err) {});
+    console.log('User has been logged out I hope');
+    res.send('Session been cleared!');
+});
 // Logging in System
 userRouter.post('/login', async (req, res) => {
     const {username, password} = req.body;
@@ -42,6 +47,15 @@ userRouter.post('/login', async (req, res) => {
         console.log(`Username: ${username} has been denied`);
         console.log('Password: * has been denied');
         res.sendStatus(401);
+    }
+});
+// Creating a new User
+userRouter.post('', async(req, res) => {
+    const { body } = req;
+    if (body) {
+        await submittingUser(body);
+    } else {
+        res.sendStatus(402);
     }
 });
 

@@ -1,6 +1,6 @@
 import express from 'express';
 import { authMiddleware } from '../middlware/Security-auth';
-import { findingStatusId, findingAuthorId, submittingReim, resolvingReim, allAuthor } from '../dao/reim-query';
+import { findingStatusId, findingAuthorId, submittingReim, resolvingReim, allAuthor, deletingReim } from '../dao/reim-query';
 import { numberReim } from '../util/sql-reim-converter';
 
 export const reimbursementRouter = express.Router();
@@ -18,9 +18,22 @@ reimbursementRouter.get('/status/:statusid', [authMiddleware(['Admin', 'Finance 
     }
 }]);
 
+// Delete records from the reimbursement_id
+reimbursementRouter.delete('/:reimid', [authMiddleware(['Admin', 'Finance Manager']), async (req, res) => {
+    const reimId: number  = +req.params.reimid;
+    console.log(reimId);
+    if (reimId) {
+        await deletingReim(reimId);
+        console.log('Deletion has been successful!');
+    } else {
+
+    }
+}]);
+
 // Grabbing the userId which calls the reim_query
-reimbursementRouter.get('/author/userId/:userId', [authMiddleware(['Admin', 'Finance Manager']), async (req, res) => {
+reimbursementRouter.get('/author/userId/:userId', async (req, res) => {
     const authorid = +req.params.userId;
+    console.log('Do I get called?!?');
     if (authorid) {
         const authorinfo = await findingAuthorId(authorid);
         if (authorinfo !== undefined) {
@@ -37,7 +50,7 @@ reimbursementRouter.get('/author/userId/:userId', [authMiddleware(['Admin', 'Fin
     } else {
         res.send(`User doesn't exist in our Reimbursement Database`);
     }
-}]);
+});
 
 // Grabbing all the Reimbursement by authors
 reimbursementRouter.get('/author', [authMiddleware(['Admin', 'Finance Manager']), async (req, res) => {

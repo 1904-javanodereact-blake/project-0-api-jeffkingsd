@@ -7,7 +7,7 @@ import { sessionERSmiddle } from './middlware/security-session';
 const ers = express();
 const port = process.env['DB_PORT'];
 
-// Grabbing Root Directory //
+
 ers.use((req, resp, next) => {
     console.log(req.get('host'));
     resp.header('Access-Control-Allow-Origin', `${req.headers.origin}`);
